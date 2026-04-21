@@ -2,9 +2,7 @@ import { Router } from "express";
 import {
   createPost,
   getPosts,
-  getMyPosts,
   getPostBySlug,
-  getPostBySlugPrivate,
   updatePost,
   deletePost
 } from "../controllers/post.controller.js";
