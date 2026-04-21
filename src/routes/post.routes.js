@@ -4,19 +4,24 @@ import {
   getPosts,
   getPostBySlug,
   updatePost,
-  deletePost
+  deletePost,
+  getMyPosts,
+  getUserPublishedPosts
 } from "../controllers/post.controller.js";
 
 import { validate } from "../middleware/validate.js";
-import { requireAuth } from "../middleware/auth.js";
+
 import { PostCreateSchema, PostUpdateSchema, PostIdParamSchema, PostSlugParamSchema } from "../schemas/post.schema.js";
+import { requireAuth } from "@clerk/express";
 
 const router = Router();
 
 router.get("/", getPosts);
+router.get("/my-posts", requireAuth(), getMyPosts); // Get all posts by current user (including unpublished)
+router.get("/user/:authorId", getUserPublishedPosts); // Get published posts by a specific user
 router.get("/:slug", validate(PostSlugParamSchema, "params"), getPostBySlug);
-router.post("/", requireAuth, validate(PostCreateSchema), createPost);
-router.put("/:id", requireAuth, validate(PostUpdateSchema), updatePost);
-router.delete("/:id", requireAuth, deletePost);
+router.post("/", requireAuth(), validate(PostCreateSchema), createPost);
+router.put("/:id", requireAuth(), validate(PostUpdateSchema), updatePost);
+router.delete("/:id", requireAuth(), deletePost);
 
 export default router;

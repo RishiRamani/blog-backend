@@ -7,12 +7,20 @@ const PORT = process.env.PORT || 8080;
 
 async function start() {
   try {
-    if (!process.env.MONGODB_URI) {
-      console.error("MONGODB_URI not set in environment");
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+    
+    if (!mongoUri) {
+      console.error("MONGO_URI not set in environment");
       process.exit(1);
     }
 
-    await mongoose.connect(process.env.MONGODB_URI); // <-- FIX HERE (no options)
+    // Check for required Clerk keys
+    if (!process.env.CLERK_SECRET_KEY) {
+      console.error("CLERK_SECRET_KEY not set in environment");
+      process.exit(1);
+    }
+
+    await mongoose.connect(mongoUri);
 
     console.log("MongoDB connected");
 

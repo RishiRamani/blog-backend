@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import { clerkMiddleware } from "@clerk/express";
 
 dotenv.config();
 
@@ -12,6 +13,9 @@ import postRoutes from "./routes/post.routes.js"; // ensure file exists
 import { apiLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
+
+// Clerk Middleware - attaches auth info to request
+app.use(clerkMiddleware());
 
 // Body size limits (avoid DOS with huge payloads)
 app.use(express.json({ limit: "2mb" }));
@@ -30,6 +34,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+
 
 // Global rate limiter for all /api endpoints
 app.use("/api", apiLimiter);
