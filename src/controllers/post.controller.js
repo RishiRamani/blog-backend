@@ -14,7 +14,6 @@ export const createPost = async (req, res, next) => {
     const post = await Post.create({
       ...data,
       slug: finalSlug,
-      authorId: req.user.sub,
       publishedAt: data.published ? new Date() : null
     });
 
@@ -46,45 +45,18 @@ export const getPosts = async (req, res, next) => {
   }
 };
 
-export const getMyPosts = async (req, res) => {
-  try {
-    const userId = req.user.sub; // from Supabase JWT
-    const posts = await Post.find({ authorId: userId }).sort({ updatedAt: -1 });
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch user's posts" });
-  }
-};
 
 export const getPostBySlug = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const post = await Post.findOne({ slug });
     if (!post) return res.status(404).json({ error: "Not found" });
-    // if not published and not author, deny
-    if (!post.published && (!req.user || req.user.sub !== post.authorId)) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
     res.json(post);
   } catch (err) {
     next(err);
   }
 };
 
-export const getPostBySlugPrivate = async (req, res, next) => {
-  try {
-    const { slug } = req.params;
-    const post = await Post.findOne({ slug });
-    if (!post) return res.status(404).json({ error: "Not found" });
-
-    if (post.authorId !== req.user.sub)
-      return res.status(403).json({ error: "Forbidden" });
-
-    res.json(post);
-  } catch (err) {
-    next(err);
-  }
-};
 
 
 export const updatePost = async (req, res, next) => {
@@ -92,7 +64,6 @@ export const updatePost = async (req, res, next) => {
     const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) return res.status(404).json({ error: "Not found" });
-    if (post.authorId !== req.user.sub) return res.status(403).json({ error: "Forbidden" });
 
     Object.assign(post, req.body);
     if (req.body.title) post.slug = makeSlug(req.body.title);
@@ -110,7 +81,6 @@ export const deletePost = async (req, res, next) => {
     const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) return res.status(404).json({ error: "Not found" });
-    if (post.authorId !== req.user.sub) return res.status(403).json({ error: "Forbidden" });
 
     await post.deleteOne();
     res.json({ success: true });

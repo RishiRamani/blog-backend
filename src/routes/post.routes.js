@@ -16,8 +16,6 @@ import { PostCreateSchema, PostUpdateSchema, PostIdParamSchema, PostSlugParamSch
 const router = Router();
 
 router.get("/", getPosts);
-router.get("/me", requireAuth, getMyPosts);
-router.get("/private/:slug", requireAuth, getPostBySlugPrivate);
 router.get("/:slug", validate(PostSlugParamSchema, "params"), getPostBySlug);
 router.post("/", requireAuth, validate(PostCreateSchema), createPost);
 router.put("/:id", requireAuth, validate(PostUpdateSchema), updatePost);
