@@ -4,7 +4,7 @@ export const validate = (schema, type = "body") => (req, res, next) => {
   try {
     const data = req[type];
     const parsed = schema.parse(data);
-    req[type] = parsed; // sanitized
+    req[type] = parsed;
     next();
   } catch (err) {
     if (err instanceof ZodError) {

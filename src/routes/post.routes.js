@@ -7,7 +7,8 @@ import {
   deletePost,
   getMyPosts,
   getUserPublishedPosts,
-  addComment
+  addComment,
+  getAllTags
 } from "../controllers/post.controller.js";
 
 import { validate } from "../middleware/validate.js";
@@ -26,6 +27,7 @@ const router = Router();
 router.get("/", getPosts);
 router.get("/my-posts", requireAuth(), getMyPosts); // Get all posts by current user (including unpublished)
 router.get("/user/:authorId", getUserPublishedPosts); // Get published posts by a specific user
+router.get("/tags", getAllTags);
 router.get("/:slug", validate(PostSlugParamSchema, "params"), getPostBySlug);
 router.post("/", requireAuth(), validate(PostCreateSchema), createPost);
 router.post("/:slug/comments", requireAuth(), validate(PostSlugParamSchema, "params"), validate(PostCommentCreateSchema), addComment);

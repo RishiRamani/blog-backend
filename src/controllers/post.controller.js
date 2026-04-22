@@ -216,3 +216,12 @@ export const addComment = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getAllTags = async (req, res, next) => {
+  try {
+    const tags = await Post.distinct("tags", { published: true });
+    res.json(tags.sort());
+  } catch (err) {
+    next(err);
+  }
+};
