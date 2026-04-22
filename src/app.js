@@ -1,4 +1,3 @@
-// src/app.js
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -7,14 +6,13 @@ import { clerkMiddleware } from "@clerk/express";
 
 dotenv.config();
 
-import postRoutes from "./routes/post.routes.js"; // ensure file exists
-// import other routers: userRoutes, uploadRoutes, etc.
+import postRoutes from "./routes/post.routes.js"; 
 
 import { apiLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
 
-// Clerk Middleware - attaches auth info to request
+// Clerk Middleware
 app.use(clerkMiddleware());
 
 // Body size limits (avoid DOS with huge payloads)

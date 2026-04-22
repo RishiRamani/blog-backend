@@ -1,4 +1,3 @@
-// src/index.js
 import "dotenv/config";
 import mongoose from "mongoose";
 import app from "./app.js";
